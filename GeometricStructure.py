@@ -25,12 +25,14 @@ class Point:
         self.x, self.y = self.x, self.y
         return self
     def get_tuple(self):
-        return (self.x, self.y)
+        return (int(self.x), int(self.y))
     def __mul__(self, other):
         return self.x * other.x + self.y * other.y
 
     def len(self):
-        return int(np.sqrt(self.x ** 2 + self.y ** 2))
+        return np.sqrt(self.x ** 2 + self.y ** 2)
+    def square_len(self):
+        return self.x ** 2 + self.y ** 2
     
     def draw(self):
         cv.line(img, self.get_tuple(),self.get_tuple(), (0,0,0),5)
@@ -40,12 +42,26 @@ class Circle:
     def __init__(self, center, radius):
         self.center = center
         self.radius = radius
+        if radius <= 0 :
+            print('radius < 0 !!')
 
+    def get_radius(self):
+        return self.radius
+    def get_center(self):
+        return self.center
+    
     def __repr__(self):
         return '[c='+self.center.__repr__()+', r= '+str(self.radius)+']'
 
-    def draw(self):
-        cv.circle(img,self.center.get_tuple(),self.radius,(0,0,0))
+    def include(self, other):
+        r1, r2 = self.radius, other.radius
+        square_d = (self.center - other.center).square_len()
+        if r1 >= r2 and r1**2 > square_d and (r1 - r2)**2 >= square_d:
+            return True
+        return False
+
+    def draw(self, color = (0,0,0)):
+        cv.circle(img,self.center.get_tuple(),self.radius,color)
         cv.imshow('image',img)
     
 class Line:
@@ -75,6 +91,6 @@ class Line:
     def vector_direction(self):
         return self.second - self.first
     
-    def draw(self):
-        cv.line(img,(self.first.x, self.first.y), (self.second.x, self.second.y),(0,0,0))
+    def draw(self, color = (0,0,0)):
+        cv.line(img,(int(self.first.x), int(self.first.y)), (int(self.second.x), int(self.second.y)),color)
         cv.imshow('image',img)
